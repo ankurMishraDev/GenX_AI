@@ -1,4 +1,4 @@
-export default {
+const authConfig = {
   providers: [
     {
       domain: "https://topical-pangolin-23.clerk.accounts.dev",
@@ -6,3 +6,5 @@ export default {
     },
   ]
 };
+
+export default authConfig;

@@ -26,14 +26,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
       <ConvexClerkProvider>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Navbar />
-        <main className="pt-24 flex-grow">{children}</main>
-        <Footer />
-      </body>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <Navbar />
+          <main className="pt-24 flex-grow">{children}</main>
+          <Footer />
+        </body>
+      </html>
     </ConvexClerkProvider>
-    </html>
   );
 }
