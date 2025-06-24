@@ -2,7 +2,7 @@
 
 import { vapi } from "@/lib/vapi";
 import { useUser } from "@clerk/nextjs";
-import { error } from "console";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -17,6 +17,22 @@ const GenerateProgram = () => {
   const router = useRouter()
 
   const msgContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(()=>{
+    if(msgContainerRef.current){
+      msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight;
+    }
+  },[message])
+
+useEffect(()=>{
+  if(callEnded){
+    const timeout = setTimeout(()=>{
+      router.push("/profile");
+    },1000);
+    return () => clearTimeout(timeout);
+  }
+},[callEnded,router])
+
   useEffect(()=>{
     const handleCallStart = () =>{
       console.log("Call started")
@@ -61,6 +77,27 @@ const GenerateProgram = () => {
       vapi.off("error", handleError)
     }
   },[])
+
+  const startCall = async () =>{
+    if(activeCall) vapi.stop()
+      else{
+    try {
+      setConnecting(true)
+      setMessage([])
+      setCallEnded(false)
+      const fullName = user?.firstName ? `${user.firstName} ${user.lastName|| ""}`.trim() : "User";
+      await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!,
+        {
+          variableValues:{
+            full_name: fullName
+          }
+        }
+      )
+    } catch (error) {
+      console.log("Failed to start call", error)
+      setConnecting(false);
+    }}
+  }
   return (
     <div>
 
