@@ -63,8 +63,8 @@ http.route({
   handler: httpAction(async (ctx, req) => {
     try {
         const payload = await req.json();
-    const {weight, age, height, injuries, fitnessGoals, workoutDays, currentFinessLevel, dietaryRestrictions, user_id} = payload;
-    if (!weight || !age || !height || !injuries || !fitnessGoals || !workoutDays || !currentFinessLevel || !dietaryRestrictions || !user_id) {
+    const {weight, age, height, injuries, fitnessGoals, workoutDays, currentFitnessLevel, dietaryRestrictions, user_id} = payload;
+    if (!weight || !age || !height || !injuries || !fitnessGoals || !workoutDays || !currentFitnessLevel || !dietaryRestrictions || !user_id) {
       return new Response("Missing required fields", { status: 400 });
     }
     const aiModel = genAI.getGenerativeModel({
@@ -83,7 +83,7 @@ http.route({
         Injuries or limitations: ${injuries}
         Available days for workout: ${workoutDays}
         Fitness goal: ${fitnessGoals}
-        Fitness level: ${currentFinessLevel}
+        Fitness level: ${currentFitnessLevel}
         
         As a professional coach:
         - Consider muscle group splits to avoid overtraining the same muscles on consecutive days
