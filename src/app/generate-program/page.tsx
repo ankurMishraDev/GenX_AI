@@ -2,17 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { vapi } from "@/lib/vapi";
+import { useAudioSession } from "@/hooks/useAudioSession";
 import { useUser } from "@clerk/nextjs";
+import { Mic, MicOff } from "lucide-react";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 const GenerateProgram = () => {
-  const [activeCall, setActiveCall] = useState(false);
-  const [connecting, setConnecting] = useState(false);
-  const [speaking, setSpeaking] = useState(false);
-  const [message, setMessage] = useState<any[]>([]);
+  const { activeCall, connecting, speaking, isRecording, messages, startCall, stopCall, toggleRecording } = useAudioSession();
   const [callEnded, setCallEnded] = useState(false);
 
   const { user } = useUser();
@@ -24,7 +22,7 @@ const GenerateProgram = () => {
     if (msgContainerRef.current) {
       msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight;
     }
-  }, [message]);
+  }, [messages]);
 
   useEffect(() => {
     if (callEnded) {
@@ -35,77 +33,30 @@ const GenerateProgram = () => {
     }
   }, [callEnded, router]);
 
-  useEffect(() => {
-    const handleCallStart = () => {
-      console.log("Call started");
-      setConnecting(false);
-      setActiveCall(true);
-      setCallEnded(false);
-    };
-    const handleCallEnd = () => {
-      console.log("Call ended");
-      setActiveCall(false);
-      setConnecting(false);
-      setSpeaking(false);
+  const handleStartCall = async () => {
+    if (activeCall) {
+      stopCall();
       setCallEnded(true);
-    };
-    const handleSpeechStart = () => {
-      console.log("Speech started");
-      setSpeaking(true);
-    };
-    const handleSpeechEnd = () => {
-      console.log("Speech ended");
-      setSpeaking(false);
-    };
-    const handleMessage = (message: any) => {
-      if(message.type === "transcript" && message.transcriptType === "final"){
-        const newMessage = {content:message.transcript, role:message.role}
-        setMessage(prev =>[...prev, newMessage]);
-      }
-    };
-    const handleError = (error: any) => {
-      console.log("Error in vapi connection", error);
-      setConnecting(false);
-      setActiveCall(false);
-    };
-    vapi
-      .on("call-start", handleCallStart)
-      .on("call-end", handleCallEnd)
-      .on("speech-start", handleSpeechStart)
-      .on("speech-end", handleSpeechEnd)
-      .on("message", handleMessage)
-      .on("error", handleError);
-    return () => {
-      vapi.off("call-start", handleCallStart);
-      vapi.off("call-end", handleCallEnd);
-      vapi.off("speech-start", handleSpeechStart);
-      vapi.off("message", handleMessage);
-      vapi.off("error", handleError);
-    };
-  }, []);
-
-  const startCall = async () => {
-    if (activeCall) vapi.stop();
-    else {
+    } else {
       try {
-        setConnecting(true);
-        setMessage([]);
         setCallEnded(false);
         const fullName = user?.firstName
           ? `${user.firstName} ${user.lastName || ""}`.trim()
           : "User";
-        await vapi.start(process.env.NEXT_PUBLIC_VAPI_WORKFLOW_ID!, {
-          variableValues: {
-            full_name: fullName,
-            user_id: user?.id,
-          },
-        });
+        
+        if (user?.id) {
+          await startCall(user.id, fullName);
+        }
       } catch (error) {
         console.log("Failed to start call", error);
-        setConnecting(false);
       }
     }
   };
+
+  const handleToggleMic = async () => {
+    await toggleRecording();
+  };
+
   return (
     <div className="flex flex-col min-h-screen text-foreground overflow-hidden pb-6 pt-24">
       <div className="container mx-auto px-4 h-full max-w-5xl">
@@ -233,11 +184,11 @@ const GenerateProgram = () => {
         </div>
 
          {/*Message Container*/}
-         {message.length >0 &&(
+         {messages.length > 0 && (
           <div ref={msgContainerRef} className="w-full bg-card/90 backdrop-blur-sm border border-border rounded-xl p-4 mb-8 h-64 overflow-y-auto
           transition-all duration-300 scroll-smooth">
             <div className="space-y-3">
-              {message.map((msg, index)=>(
+              {messages.map((msg, index)=>(
                 <div className="message-item animate-fadeIn" key={index}>
                   <div className="font-semibold text-xs text-muted-foreground mb-1">
                     {msg.role === "assistant" ? "GenX_AI" : "You"}
@@ -260,7 +211,7 @@ const GenerateProgram = () => {
           <div className="w-full flex justify-center gap-4">
             <Button
               className={`w-40 text-xl rounded-3xl ${activeCall ? "bg-destructive hover:bg-destructive/90" : callEnded ? "bg-green-500 hover:bg-green-700" : "bg-primary hover:bg-primary/90"} text-white relative`}
-              onClick={startCall}
+              onClick={handleStartCall}
               disabled={connecting||callEnded}>
                 {connecting &&(<span className="absolute inset-0 rounded-full animate-ping bg-primary/50 opacity-75"></span>)}
                 <span>
@@ -268,6 +219,28 @@ const GenerateProgram = () => {
                 </span>
                 
               </Button>
+
+            {/* Microphone Toggle Button */}
+            {activeCall && (
+              <Button
+                variant="default"
+                size="icon"
+                className={`relative w-16 h-16 rounded-full transition-all ${
+                  isRecording 
+                    ? "bg-destructive hover:bg-destructive/90 scale-110" 
+                    : "bg-gray-500 hover:bg-gray-600"
+                }`}
+                onClick={handleToggleMic}
+                disabled={connecting || !activeCall}
+              >
+                {isRecording ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
+                
+                {/* Pulse animation when recording */}
+                {isRecording && (
+                  <span className="absolute inset-0 rounded-full bg-destructive/30 animate-pulse" />
+                )}
+              </Button>
+            )}
           </div>
 
       </div>

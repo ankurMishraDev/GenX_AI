@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import ConvexClerkProvider from "@/providers/ConvexClerkProvider";
+import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <ConvexClerkProvider>
+    <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`} cz-shortcut-listen="true">
           <Navbar />
@@ -34,6 +34,6 @@ export default function RootLayout({
           <Footer />
         </body>
       </html>
-    </ConvexClerkProvider>
+    </ClerkProvider>
   );
 }

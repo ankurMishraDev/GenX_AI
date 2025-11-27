@@ -1,7 +1,7 @@
 "use client"
 import Link from "next/link";
 import {SignInButton, SignUpButton, UserButton, useUser} from "@clerk/nextjs";
-import {HomeIcon, NotebookIcon, User2Icon, ZapIcon} from "lucide-react";
+import {HomeIcon, NotebookIcon, User2Icon, ZapIcon, History} from "lucide-react";
 import {Button} from "@/components/ui/button";
 const Navbar = () => {
     const {isSignedIn} = useUser();
@@ -33,6 +33,11 @@ const Navbar = () => {
                 <Link href="/profile" className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors">
                 <User2Icon size={16} />
                 <span>Profile</span>
+                </Link>
+
+                <Link href="/history" className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors">
+                <History size={16} />
+                <span>History</span>
                 </Link>
 
                 <Button asChild variant="outline" className="ml-2 border-primary/65 text-primary hover:text-white hover:bg-primary/10">
