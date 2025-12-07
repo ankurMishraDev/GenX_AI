@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  ChevronRight,
   Dumbbell,
   Sparkles,
   Users,
@@ -41,16 +40,16 @@ const SampleProgramDisplay = () => {
             {/* STATS */}
             <div className="flex items-center justify-center gap-16 mt-10 font-mono">
               <div className="flex flex-col items-center">
-                <p className="text-3xl text-primary">500+</p>
+                <p className="text-3xl text-primary">100+</p>
                 <p className="text-sm text-muted-foreground uppercase tracking-wide mt-1">
-                  PROGRAMS
+                  PROGRAMS GENERATED
                 </p>
               </div>
               <div className="w-px h-12 bg-border"></div>
               <div className="flex flex-col items-center">
                 <p className="text-3xl text-primary">3min</p>
                 <p className="text-sm text-muted-foreground uppercase tracking-wide mt-1">
-                  CREATION TIME
+                 PLAN CREATION TIME
                 </p>
               </div>
               <div className="w-px h-12 bg-border"></div>
@@ -172,14 +171,14 @@ const SampleProgramDisplay = () => {
                 </div>
               </CardContent>
 
-              <CardFooter className="px-5 py-4 border-t border-border">
+              {/* <CardFooter className="px-5 py-4 border-t border-border">
                 <Link href={`/programs/${program.id}`} className="w-full">
                   <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                     View Program Details
                     <ChevronRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
-              </CardFooter>
+              </CardFooter> */}
             </Card>
           ))}
         </div>
@@ -196,7 +195,7 @@ const SampleProgramDisplay = () => {
             </Button>
           </Link>
           <p className="text-muted-foreground mt-4">
-            Join 500+ users with AI-customized fitness programs
+            Join 100+ users with AI-customized fitness programs
           </p>
         </div>
       </div>

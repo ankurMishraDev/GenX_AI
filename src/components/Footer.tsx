@@ -25,7 +25,7 @@ const Footer = () => {
           </div>
 
           {/* Links */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-2 text-sm">
+          <div className="flex flex-wrap justify-center gap-x-12 gap-y-2 text-lg">
             <Link
               href="/about"
               className="text-muted-foreground hover:text-primary transition-colors"
@@ -43,18 +43,6 @@ const Footer = () => {
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               Privacy
-            </Link>
-            <Link
-              href="/contact"
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/blog"
-              className="text-muted-foreground hover:text-primary transition-colors"
-            >
-              Blog
             </Link>
             <Link
               href="/help"

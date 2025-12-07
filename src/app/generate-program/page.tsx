@@ -27,7 +27,7 @@ const GenerateProgram = () => {
   useEffect(() => {
     if (callEnded) {
       const timeout = setTimeout(() => {
-        router.push("/profile");
+        router.push("/plan");
       }, 1000);
       return () => clearTimeout(timeout);
     }

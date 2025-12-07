@@ -1,8 +1,9 @@
 "use client"
 import Link from "next/link";
 import {SignInButton, SignUpButton, UserButton, useUser} from "@clerk/nextjs";
-import {HomeIcon, NotebookIcon, User2Icon, ZapIcon, History} from "lucide-react";
+import {HomeIcon, NotebookIcon, ClipboardList, User2Icon, ZapIcon, History} from "lucide-react";
 import {Button} from "@/components/ui/button";
+import {ThemeToggle} from "@/components/ThemeToggle";
 const Navbar = () => {
     const {isSignedIn} = useUser();
   return (
@@ -25,9 +26,14 @@ const Navbar = () => {
                 <span>Home</span>
                 </Link>
 
-                <Link href="/generate-program" className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors">
+                {/* <Link href="/generate-program" className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors">
                 <NotebookIcon size={16} />
                 <span>Program</span>
+                </Link> */}
+
+                <Link href="/plan" className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors">
+                <ClipboardList size={16} />
+                <span>Plan</span>
                 </Link>
 
                 <Link href="/profile" className="flex items-center gap-1.5 text-sm hover:text-primary transition-colors">
@@ -41,8 +47,9 @@ const Navbar = () => {
                 </Link>
 
                 <Button asChild variant="outline" className="ml-2 border-primary/65 text-primary hover:text-white hover:bg-primary/10">
-                <Link href="/generate-program">Proceed</Link>
+                <Link href="/generate-program">Program</Link>
                 </Button>
+                <ThemeToggle />
                 <UserButton/>
                 </>
             ):(
@@ -52,10 +59,10 @@ const Navbar = () => {
                 Login
                 </Button>
                </SignInButton>
-
                <SignUpButton>
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Sign Up</Button>
                </SignUpButton>
+               <ThemeToggle />
                </>
             )}
         </nav>

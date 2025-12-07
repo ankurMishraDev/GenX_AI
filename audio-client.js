@@ -62,7 +62,7 @@ class AudioClient {
     this.onTurnComplete = () => {}
     this.onError = () => {}
     this.onInterrupted = () => {}
-    this.onSessionIdReceived = (sessionId) => {}
+    this.onSessionIdReceived = () => {}
 
     // Audio playback
     this.audioQueue = []
@@ -375,6 +375,7 @@ class AudioClient {
           this.currentSource.disconnect()
         } catch (e) {
           // Ignore errors if already stopped
+          console.error("Error stopping previous audio source:", e)
         }
         this.currentSource = null
       }
@@ -453,6 +454,7 @@ class AudioClient {
         this.currentSource.disconnect()
       } catch (e) {
         // Ignore errors if already stopped
+        console.error("Error stopping audio source:", e)
       }
       this.currentSource = null
     }

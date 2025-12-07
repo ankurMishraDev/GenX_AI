@@ -36,7 +36,7 @@ interface Session {
   workoutPlan?: {
     schedule: string[];
     exercises: Array<{
-      day: string;
+      day: string | { day: string; muscle_groups?: string[] };
       routines: Array<{
         name: string;
         sets?: number;
@@ -286,7 +286,9 @@ const SessionDetailPage = () => {
                 <p className="text-sm font-semibold">Exercise Breakdown:</p>
                 {session.workoutPlan.exercises.map((exercise, idx) => (
                   <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2">
-                    <h4 className="font-semibold text-lg mb-3">{exercise.day}</h4>
+                    <h4 className="font-semibold text-lg mb-3">
+                      {typeof exercise.day === 'string' ? exercise.day : exercise.day?.day || `Day ${idx + 1}`}
+                    </h4>
                     <div className="space-y-2">
                       {exercise.routines.map((routine, ridx) => (
                         <div key={ridx} className="bg-muted/50 rounded-lg p-3">

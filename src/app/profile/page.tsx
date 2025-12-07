@@ -2,206 +2,108 @@
 
 import { useUser } from '@clerk/nextjs';
 import { SignOutButton } from '@clerk/nextjs';
-import React, { useEffect, useState } from 'react';
-
-interface Plan {
-  name: string;
-  workoutPlan: {
-    schedule: string[];
-    exercises: Array<{
-      day: string;
-      routines: Array<{
-        name: string;
-        sets?: number;
-        reps?: number;
-        duration?: number;
-        description?: string;
-      }>;
-    }>;
-  };
-  nutritionPlan: {
-    caloriesIntake: number;
-    meals: Array<{
-      name: string;
-      foods: string[];
-    }>;
-  };
-  isActive: boolean;
-  createdAt?: {
-    toDate: () => Date;
-  } | string | Date;
-}
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Mail, User as UserIcon, Calendar } from 'lucide-react';
 
 const ProfilePage = () => {
   const { user } = useUser();
-  const [activePlan, setActivePlan] = useState<Plan | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-
-    // Fetch active plan from API route
-    const fetchActivePlan = async () => {
-      try {
-        const response = await fetch('/api/plans?active=true');
-        const data = await response.json();
-        
-        if (data.success && data.plan) {
-          setActivePlan(data.plan);
-        } else {
-          setActivePlan(null);
-        }
-      } catch (error) {
-        console.error('Error fetching active plan:', error);
-        setActivePlan(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchActivePlan();
-  }, [user?.id]);
+  if (!user) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto text-center py-12">
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Profile Page</h1>
-          <SignOutButton />
+          <h1 className="text-3xl font-bold">Profile</h1>
+          <SignOutButton>
+            <Button variant="outline">Sign Out</Button>
+          </SignOutButton>
         </div>
 
-        {loading ? (
-          <div className="text-center py-8">
-            <p>Loading your fitness plan...</p>
+        <Card className="p-6 mb-6">
+          <div className="flex items-center gap-6 mb-6">
+            {user.imageUrl && (
+              <img
+                src={user.imageUrl}
+                alt={user.fullName || 'User'}
+                className="w-20 h-20 rounded-full border-2 border-primary"
+              />
+            )}
+            <div>
+              <h2 className="text-2xl font-bold">{user.fullName || 'User'}</h2>
+              <p className="text-muted-foreground">Member since {new Date(user.createdAt).toLocaleDateString()}</p>
+            </div>
           </div>
-        ) : activePlan ? (
-          <div className="space-y-6">
-            <div className="bg-card border rounded-lg p-6">
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-1">{activePlan.name}</h2>
-                {activePlan.createdAt && (
-                  <p className="text-sm text-muted-foreground">
-                    Created on {typeof activePlan.createdAt === 'object' && 'toDate' in activePlan.createdAt
-                      ? new Date(activePlan.createdAt.toDate()).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })
-                      : new Date(activePlan.createdAt).toLocaleDateString('en-US', {
-                          month: 'long',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })
-                    }
-                  </p>
-                )}
-              </div>
 
-              {/* Workout Plan Section */}
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-3">Workout Plan</h3>
-                <p className="text-sm text-muted-foreground mb-2">
-                  Schedule: {activePlan.workoutPlan.schedule.join(', ')}
-                </p>
-                <div className="space-y-4">
-                  {activePlan.workoutPlan.exercises.map((exercise, idx) => (
-                    <div key={idx} className="border-l-4 border-primary pl-4">
-                      <h4 className="font-semibold">{exercise.day}</h4>
-                      <ul className="mt-2 space-y-2">
-                        {exercise.routines.map((routine, ridx) => (
-                          <li key={ridx} className="text-sm">
-                            <span className="font-medium">{routine.name}</span>
-                            {routine.sets && routine.reps && (
-                              <span className="text-muted-foreground">
-                                {' '}
-                                - {routine.sets} sets × {routine.reps} reps
-                              </span>
-                            )}
-                            {routine.duration && (
-                              <span className="text-muted-foreground">
-                                {' '}
-                                - {routine.duration} minutes
-                              </span>
-                            )}
-                            {routine.description && (
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {routine.description}
-                              </p>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Nutrition Plan Section */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <UserIcon className="w-5 h-5 text-primary" />
               <div>
-                <h3 className="text-xl font-semibold mb-3">Nutrition Plan</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Daily Calorie Target: {activePlan.nutritionPlan.caloriesIntake} kcal
+                <p className="text-sm text-muted-foreground">Username</p>
+                <p className="font-medium">{user.username || user.firstName || 'Not set'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <Mail className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm text-muted-foreground">Email</p>
+                <p className="font-medium">{user.primaryEmailAddress?.emailAddress || 'Not set'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <Calendar className="w-5 h-5 text-primary" />
+              <div>
+                <p className="text-sm text-muted-foreground">Account Created</p>
+                <p className="font-medium">
+                  {new Date(user.createdAt).toLocaleDateString('en-US', {
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
                 </p>
-                <div className="grid gap-3">
-                  {activePlan.nutritionPlan.meals.map((meal, idx) => (
-                    <div key={idx} className="border rounded p-3">
-                      <h4 className="font-semibold mb-2">{meal.name}</h4>
-                      <ul className="list-disc list-inside text-sm">
-                        {meal.foods.map((food, fidx) => (
-                          <li key={fidx}>{food}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
-        ) : (
-          <div className="text-center py-12 bg-card border rounded-lg">
-            <div className="max-w-md mx-auto px-6">
-              <div className="mb-4">
-                <svg
-                  className="w-16 h-16 mx-auto text-muted-foreground"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">No Active Fitness Plan</h3>
-              <p className="text-muted-foreground mb-6">
-                You haven&apos;t generated a complete fitness plan yet. Start AI sessions to gather your fitness data and create a personalized workout and nutrition plan!
-              </p>
-              <div className="space-y-3">
-                <button
-                  onClick={() => window.location.href = '/generate-program'}
-                  className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
-                >
-                  Start New Session
-                </button>
-                <button
-                  onClick={() => window.location.href = '/history'}
-                  className="w-full px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors"
-                >
-                  View Session History
-                </button>
-              </div>
-              <p className="text-xs text-muted-foreground mt-4">
-                Track all your coaching sessions and progress on the History page
-              </p>
-            </div>
+        </Card>
+
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
+          <div className="space-y-3">
+            <Button
+              onClick={() => window.location.href = '/plan'}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              View My Fitness Plan
+            </Button>
+            <Button
+              onClick={() => window.location.href = '/history'}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              View Session History
+            </Button>
+            <Button
+              onClick={() => window.location.href = '/generate-program'}
+              variant="outline"
+              className="w-full justify-start"
+            >
+              Start New AI Session
+            </Button>
           </div>
-        )}
+        </Card>
       </div>
     </div>
   );

@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 
+# keys
 service-account.json
 admin-key.json
 # testing

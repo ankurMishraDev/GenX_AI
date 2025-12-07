@@ -107,17 +107,18 @@ const HistoryPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Session History</h1>
-          <p className="text-muted-foreground">
-            Track your fitness journey through AI coaching sessions
-          </p>
-        </div>
+    <div className="flex flex-col min-h-screen">
+      <div className="container mx-auto px-4 py-8 flex-grow">
+        <div className="max-w-5xl mx-auto">
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold mb-2">Session History</h1>
+            <p className="text-muted-foreground">
+              Track your fitness journey through AI coaching sessions
+            </p>
+          </div>
 
-        {loading ? (
-          <div className="text-center py-12">
+          {loading ? (
+            <div className="text-center py-12">
             <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
             <p className="mt-4 text-muted-foreground">Loading your session history...</p>
           </div>
@@ -191,6 +192,7 @@ const HistoryPage = () => {
             )}
           </div>
         )}
+        </div>
       </div>
     </div>
   );
